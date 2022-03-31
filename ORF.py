@@ -16,7 +16,7 @@ def get_revcomp(dna):
 #   -> maxlen: Maximal length of ORF
 def findORFs(infile, outfile_dna, outfile_aa, minlen, maxlen):
     # Open input file
-    with open('input/infile.fasta') as f:
+    with open(infile) as f:
         dna = f.read().upper()
     print("==> Reading input genome: " + dna)
     # Open output files
@@ -57,7 +57,25 @@ def findORFs(infile, outfile_dna, outfile_aa, minlen, maxlen):
     aa_file.close()
     print("==> DONE")
 
-# MAIN CALL 'findORFs' 
+def print_output():
+    print("--> DNA sequences:")
+    with open("output/orfs_dna.fasta") as f:
+        print(f.read())
+    print("--> Amino acids:")
+    with open("output/orfs_aa.fasta") as f:
+        print(f.read())
+
+def test_findORFs(min, max):
+    print("==> Testing ORF length " + str(min) + "-" + str(max) + "...")
+    # FIND THE ORFs !!
+    findORFs("input/in.fasta", "output/orfs_dna.fasta", "output/orfs_aa.fasta", min, max)
+    print("\n")
+    print("==> Results:")
+    print_output()
+
+# MAIN CALL 
 def main():
-    findORFs("input/infile.fasta", "output/outfile_dna.fasta", "output/outfile_aa.fasta", 1, 10)
+    test_findORFs(1,10)
+    print("\n")
+    test_findORFs(4,10)
 main()
