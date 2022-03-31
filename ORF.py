@@ -17,7 +17,7 @@ def get_revcomp(dna):
 def findORFs(infile, outfile_dna, outfile_aa, minlen, maxlen):
     # Open input file
     with open('input/infile.fasta') as f:
-        dna = f.read()
+        dna = f.read().upper()
     print("==> Reading input genome: " + dna)
     # Open output files
     dna_file = open(outfile_dna, "w")
