@@ -17,4 +17,4 @@ def findORFs(infile, outfile_dna, outfile_aa, minlen, maxlen): # FindORFs Functi
     for m in matches_rev: write_orf(dna_f, aa_f, rev[m.regs[1][0]:m.regs[1][1]], len(dna) - m.regs[1][0], len(dna) - m.regs[1][1] + 1) # Write all revcomp matches
     dna_f.close(), aa_f.close() # Close output files 
     return True # Success
-[(print("Testing ORF length "+str(l)+"-"+str(h)), findORFs(IN_DNA, OUT_DNA, OUT_AA, l, h), print_output()) for l,h in ((1,10), (4,10))] # Test with lengths 1-10 and 4-10 
+[(print("Testing ORF length "+str(l)+"-"+str(h)), print_output() if findORFs(IN_DNA, OUT_DNA, OUT_AA, l, h) else None) for l,h in ((1,10), (4,10))] # Test with lengths 1-10 and 4-10 
