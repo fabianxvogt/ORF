@@ -1,5 +1,5 @@
 from re import finditer, compile
-IN_DNA, OUT_DNA, OUT_AA, IUPAC_FNAME = "input/in.fasta", "output/orfs_dna.fasta",  "output/orfs_aa.fasta", "data/iupac.txt" # FILENAMES
+IN_DNA, OUT_DNA, OUT_AA, IUPAC_FNAME = "input/in.fasta", "output/orfs_dna.fasta", "output/orfs_aa.fasta", "data/iupac.txt" # FILENAMES
 IUPAC = dict(x.split(" ") for x in open(IUPAC_FNAME).read().splitlines()) # Prepares IUPAC dictionary
 def iupac_transl(orf): return ''.join([IUPAC[orf[i:i+3]] for i in range(0, len(orf)-2, 3)]) # Translates an ORF using UIPAC dict
 def orf_regex(min, max): return compile(r"(?=(ATG(?:...){" + str(min) + r"," + str(max) + r"}?(?<=TAA|TAG|TGA)))") # ORF RegEx pattern
