@@ -19,4 +19,5 @@ def fasta_to_dict(fasta_file_path: str):
 # - descr: FASTA description line
 # - data: FASTA data line 
 def write_fasta_record(fasta_file: TextIOWrapper, descr: str, data: str): 
-    [fasta_file.write(x) for x in (">" + descr + "\n", data + "\n")] 
+    [fasta_file.write(x) for x in (">" + descr + "\n", data + "\n")]
+    return fasta_file

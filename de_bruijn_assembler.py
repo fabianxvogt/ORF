@@ -115,8 +115,6 @@ class DBGraph:
     def add_kmers(self, kmers):
         if (self.kmer_len == -1):
             self.kmer_len = len(list(kmers.items())[0][0])
-        
-        node = None
 
         for i in range(0, len(kmers)):
             seq = list(kmers)[i]

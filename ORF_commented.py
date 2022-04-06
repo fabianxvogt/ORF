@@ -85,7 +85,8 @@ def findORFs(infile, outfile_dna, outfile_aa, minlen, maxlen):
         # Regex search pattern for amino acids
         regex_pattern = orf_regex(minlen, maxlen)
         # Find ORFs (RegEx matches) in input and reverse complement
-        matches_input, matches_revcomp = tuple(finditer(regex_pattern, dna)), tuple(finditer(regex_pattern, revcomp))
+        matches_input = tuple(finditer(regex_pattern, dna))
+        matches_revcomp = tuple(finditer(regex_pattern, revcomp))
         print("==> Found " + str(len(matches_input) + len(matches_revcomp)) + " ORFs. Saving to FASTA files...")
         # Open output files
         out_files[genome_name] = [outfile_dna + "_" + genome_name + DOT_FASTA, outfile_aa + "_" + genome_name + DOT_FASTA] # Store output file names     
@@ -118,7 +119,7 @@ def test_findORFs(min, max):
       
 # MAIN CALL 
 def main():
-    test_findORFs(1,10)
-    print("\n")
     test_findORFs(4,10)
+    print("\n")
+    test_findORFs(1,10)
 main()
