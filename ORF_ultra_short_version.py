@@ -14,9 +14,10 @@ def findORFs(infile, outfile_dna, outfile_aa, minlen, maxlen): # FindORFs Functi
     for gen_id, dna in inp_genoms.items(): # Loop over all genoms 
         rev = revcomp(dna) # Get the reverse complement
         matches_dna, matches_rev = [tuple(finditer(regex_pattern, g)) for g in (dna, rev)] # Find all matches 
-        out_files[gen_id] = [f + "_" + gen_id + ".fasta" for f in (outfile_dna,outfile_aa)]
+        out_files[gen_id] = [f + "_" + gen_id.strip()[0:10] + ".fasta" for f in (outfile_dna,outfile_aa)]
         dna_f, aa_f = [open(out_files[gen_id][i], "w") for i in (0,1)] # Open output files
         [[write_orf(dna_f, aa_f, g, s, e) for g,(s,e) in [(gen[i[0]:i[1]], ((len(gen)-i[0], len(gen)-i[1]+1) if r else (i[0]+1, i[1]))) for i in [m.regs[1] for m in ms]]] for ms, gen, r in [(matches_dna, dna, False),(matches_rev, rev, True)]] # Write ORFs -- I've taken it a bit too far on this line ... :-)
         [f.close() for f in (dna_f, aa_f)] # Close files
     return out_files # Success
-[(print("Testing ORF length "+str(l)+"-"+str(h)), print_output(findORFs(IN_DNA, OUT_DNA, OUT_AA, l, h))) for l,h in ((4,10), (1,10))] # Test with lengths 1-10 and 4-10 
+findORFs(IN_DNA, OUT_DNA, OUT_AA, 1, 10)
+[(print("Testing ORF length "+str(l)+"-"+str(h)), print_output(findORFs(IN_DNA, OUT_DNA, OUT_AA, l, h))) for l,h in ((4,10),(1,10))] # Test with lengths 1-10 and 4-10 

@@ -1,4 +1,5 @@
 from re import finditer, compile
+import time
 from fasta_utils import fasta_to_dict, write_fasta_record
 
 """
@@ -6,7 +7,7 @@ CONSTANTS
 """
 DOT_FASTA = ".fasta"
 # File names
-IN_FNAME = "input/in" + DOT_FASTA
+IN_FNAME = "input/tuberculosis" + DOT_FASTA  # TRY THE TUBERCULOSIS FILE
 OUT_DNA_FNAME = "output/orfs_dna"
 OUT_AA_FNAME = "output/orfs_aa"
 IUPAC_FNAME = "data/iupac.txt"
@@ -69,32 +70,36 @@ FIND ORFs
 # - maxlen: Maximal length of ORF
 def findORFs(infile, outfile_dna, outfile_aa, minlen, maxlen):
     # Open input file
+    start_time = time.perf_counter()
     try:
         input_genoms = fasta_to_dict(infile)
     except (FileNotFoundError):
         print("ERROR: Input file could not be found!")
         return
-    print("==> " + str(len(input_genoms)) + " Genoms found. Begin searching for ORFs...")
+    read_time = time.perf_counter() - start_time
+    print("==> " + str(len(input_genoms)) + " Genoms read in "+str(read_time)+" Seconds. Begin searching for ORFs...")
     # Variable to store output file names
     out_files = {} 
     for i, (genome_name, dna) in enumerate(input_genoms.items()):
-        print("==> Reading input genome "+str(i+1)+" ("+genome_name+"): " + dna)
+        gen_time = time.perf_counter()
+        #print("==> Reading input genome "+str(i+1)+" ("+genome_name+"): " + dna)
         # Generate reverse complement
         revcomp = get_revcomp(dna)
-        print("==> Reverse Complement "+str(i+1)+" ("+genome_name+"): " + revcomp)
+        #print("==> Reverse Complement "+str(i+1)+" ("+genome_name+"): " + revcomp)
         # Regex search pattern for amino acids
         regex_pattern = orf_regex(minlen, maxlen)
         # Find ORFs (RegEx matches) in input and reverse complement
         matches_input = tuple(finditer(regex_pattern, dna))
         matches_revcomp = tuple(finditer(regex_pattern, revcomp))
-        print("==> Found " + str(len(matches_input) + len(matches_revcomp)) + " ORFs. Saving to FASTA files...")
+        find_time = time.perf_counter() - gen_time
+        print("==> Found " + str(len(matches_input) + len(matches_revcomp)) + " ORFs in "+str(find_time)+" Seconds. Saving to FASTA files...")
+        gen_time = time.perf_counter()
         # Open output files
-        out_files[genome_name] = [outfile_dna + "_" + genome_name + DOT_FASTA, outfile_aa + "_" + genome_name + DOT_FASTA] # Store output file names     
+        out_files[genome_name] = [outfile_dna + "_" + genome_name.strip()[0:10] + DOT_FASTA, outfile_aa + "_" + genome_name.strip()[0:10] + DOT_FASTA] # Store output file names     
         dna_file = open(out_files[genome_name][0], "w")
         aa_file = open(out_files[genome_name][1], "w")
         # Write input sequence ORFs
         for m in matches_input:
-            print(m.span())
             write_orf(dna_file, aa_file, dna[m.regs[1][0]:m.regs[1][1]], m.regs[1][0] + 1, m.regs[1][1])
         # Write reverse complement ORFs
         for m in matches_revcomp:
@@ -102,7 +107,10 @@ def findORFs(infile, outfile_dna, outfile_aa, minlen, maxlen):
         # Close output files
         dna_file.close()
         aa_file.close()
-    print("==> DONE ("+str(i+1)+" genoms processed!)")
+        save_time = time.perf_counter() - gen_time
+        print("==> ORFs saved in "+str(save_time)+" Seconds!")
+    process_time = time.perf_counter() - read_time
+    print("==> DONE ("+str(i+1)+" genoms processed in "+str(process_time)+" Seconds!)")
     return out_files
 
 """
@@ -115,11 +123,11 @@ def test_findORFs(min, max):
     output_files = findORFs(IN_FNAME, OUT_DNA_FNAME, OUT_AA_FNAME, min, max)
     if len(output_files) > 0:
         print("\n==> Results:")
-        print_output(output_files)
+        #print_output(output_files)
       
 # MAIN CALL 
 def main():
     test_findORFs(4,10)
     print("\n")
-    test_findORFs(1,10)
+    #test_findORFs(1,10)
 main()

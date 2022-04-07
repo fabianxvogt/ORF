@@ -5,12 +5,13 @@ from io import TextIOWrapper
 # - fasta_file_path: FASTA file path to read from
 def fasta_to_dict(fasta_file_path: str):
     d = {}
-    for l in open(fasta_file_path).read().splitlines():
-        if l.startswith(">"):
-            k = l[1:]
-            d[k] = ""
-        else: 
-            d[k] += l
+    with open(fasta_file_path) as f:
+        for l in f.read().splitlines():
+            if l.startswith(">"):
+                k = l[1:]
+                d[k] = ""
+            else: 
+                d[k] += l
     return d
 
 # Write a record to a file in FASTA format
